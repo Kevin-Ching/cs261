@@ -1,0 +1,112 @@
+#include "native/examples/examples.h"
+#include "my_utils.h"
+
+using namespace std;
+using namespace seal;
+
+void test_float_dot_product()
+{
+    const size_t LENGTH = 1024;
+    const double UPPER_BOUND = 1000000;
+    const double LOWER_BOUND = -UPPER_BOUND;
+
+    print_example_banner("Test: Float Dot Product");
+
+    /* Setting parameters */
+    EncryptionParameters parms(scheme_type::ckks);
+
+    size_t poly_modulus_degree = 8192;
+    parms.set_poly_modulus_degree(poly_modulus_degree);
+    parms.set_coeff_modulus(CoeffModulus::Create(poly_modulus_degree, { 60, 40, 40, 60 }));
+
+    /* Setting scale */
+    double scale = pow(2.0, 40);
+
+    /* Creating context */
+    SEALContext context(parms);
+    print_parameters(context);
+    cout << endl;
+
+    /* Verification that batching is enabled */
+    auto qualifiers = context.first_context_data()->qualifiers();
+    cout << "Batching enabled: " << boolalpha << qualifiers.using_batching << endl;
+
+    /* Setting up keys and object instances */
+    KeyGenerator keygen(context);
+    SecretKey secret_key = keygen.secret_key();
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
+    RelinKeys relin_keys;
+    keygen.create_relin_keys(relin_keys);
+    GaloisKeys galois_keys;
+    keygen.create_galois_keys(galois_keys);
+    Encryptor encryptor(context, public_key);
+    Evaluator evaluator(context);
+    Decryptor decryptor(context, secret_key);
+
+    CKKSEncoder encoder(context);
+    size_t slot_count = encoder.slot_count();
+    cout << "Number of slots: " << slot_count << endl;
+
+    /* Print length of vectors */
+    cout << "Vector lengths: " << LENGTH << endl;
+
+    /* Setting up PRNG for doubles */
+    srand(time(NULL));
+    uniform_real_distribution<double> unif(LOWER_BOUND, UPPER_BOUND);
+    random_device rd;
+    mt19937 gen(rd());
+
+    /* Creating vector 1 */
+    vector<double> vec(slot_count, 0ULL);
+    for (size_t i = 0; i < LENGTH; i++)
+    {
+        vec[i] = unif(gen);
+    }
+
+    cout << "Input plaintext vector:" << endl;
+    print_vector(vec, 3, 7);
+
+    /* Encoding and encrypting vector 1 */
+    Plaintext plain_vector;
+    print_line(__LINE__);
+    cout << "Encode and encrypt." << endl;
+    encoder.encode(vec, scale, plain_vector);
+    Ciphertext encrypted_vector;
+    encryptor.encrypt(plain_vector, encrypted_vector);
+
+    /* Creating vector 2 */
+    vector<double> vec2(slot_count, 0ULL);
+    for (size_t i = 0; i < LENGTH; i++)
+    {
+        vec2[i] = unif(gen);
+    }
+
+    cout << "Second input plaintext vector:" << endl;
+    print_vector(vec2, 3, 7);
+
+    /* Encoding and encrypting vector 2 */
+    Plaintext plain_vector2;
+    print_line(__LINE__);
+    cout << "Encode and encrypt." << endl;
+    encoder.encode(vec2, scale, plain_vector2);
+    Ciphertext encrypted_vector2;
+    encryptor.encrypt(plain_vector2, encrypted_vector2);
+
+    /* Printing true result (modulus an upper bound on values (plain_modulus))*/
+    print_line(__LINE__);
+    cout << "Computing plaintext dot product." << endl;
+    double true_result = vec_dot_product_floats(vec, vec2, LENGTH);
+    cout << "   + Expected result: " << true_result << endl;
+
+    /* Evaluating encrypted dot product and printing result */
+    print_line(__LINE__);
+    cout << "Evaluating encrypted dot product." << endl;
+    Ciphertext product = enc_dot_product_floats(evaluator, relin_keys, galois_keys, encrypted_vector, encrypted_vector2, LENGTH);
+    double result = dot_product_val_CKKS(decryptor, encoder, product);
+    cout << "   + Computed result: " << result << endl;
+
+    /* Print the absolute deviation from the true result */
+    print_line(__LINE__);
+    cout << "The absolute deviation from the true result is: " << abs(true_result - result) << endl;
+}

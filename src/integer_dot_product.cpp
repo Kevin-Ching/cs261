@@ -101,7 +101,7 @@ void test_integer_dot_product()
     /* Evaluating encrypted dot product and printing result */
     print_line(__LINE__);
     cout << "Evaluating encrypted dot product." << endl;
-    Ciphertext product = enc_dot_product(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_matrix2, LENGTH);
+    Ciphertext product = enc_dot_product_ints(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_matrix2, LENGTH);
     uint64_t result = dot_product_val_BFV(decryptor, batch_encoder, product);
     cout << "   + Computed result: " << result << endl;
 

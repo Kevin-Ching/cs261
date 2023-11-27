@@ -7,6 +7,7 @@ target_sources(tests PRIVATE
     src/tests.cpp src/tests.h 
     src/my_utils.cpp src/my_utils.h
     src/integer_dot_product.cpp
+    src/float_dot_product.cpp
 )
 
 add_subdirectory(SEAL)
