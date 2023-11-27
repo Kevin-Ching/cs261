@@ -6,3 +6,5 @@ using namespace seal;
 void test_integer_dot_product();
 
 void test_float_dot_product();
+
+void test_float_matrix_vector_product();

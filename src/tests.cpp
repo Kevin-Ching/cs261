@@ -62,6 +62,7 @@ int main()
             break;
 
         case 3:
+            test_float_matrix_vector_product();
             break;
 
         case 0:

@@ -93,7 +93,7 @@ void test_float_dot_product()
     Ciphertext encrypted_vector2;
     encryptor.encrypt(plain_vector2, encrypted_vector2);
 
-    /* Printing true result (modulus an upper bound on values (plain_modulus))*/
+    /* Printing true result */
     print_line(__LINE__);
     cout << "Computing plaintext dot product." << endl;
     double true_result = vec_dot_product_floats(vec, vec2, LENGTH);

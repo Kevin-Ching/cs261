@@ -8,6 +8,7 @@ target_sources(tests PRIVATE
     src/my_utils.cpp src/my_utils.h
     src/integer_dot_product.cpp
     src/float_dot_product.cpp
+    src/float_matrix_vector.cpp
 )
 
 add_subdirectory(SEAL)
