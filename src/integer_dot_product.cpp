@@ -95,14 +95,14 @@ void test_integer_dot_product()
     /* Printing true result (modulus an upper bound on values (plain_modulus))*/
     print_line(__LINE__);
     cout << "Computing plaintext dot product." << endl;
-    uint64_t true_result = vec_dot_product_ints(pod_matrix, pod_matrix2, LENGTH) % upper_bound;
+    uint64_t true_result = vec_int_dot_product(pod_matrix, pod_matrix2, LENGTH) % upper_bound;
     cout << "   + Expected result: " << true_result << endl;
 
     /* Evaluating encrypted dot product and printing result */
     print_line(__LINE__);
     cout << "Evaluating encrypted dot product." << endl;
-    Ciphertext product = enc_dot_product_ints(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_matrix2, LENGTH);
-    uint64_t result = dot_product_val_BFV(decryptor, batch_encoder, product);
+    Ciphertext product = BFV_dot_product(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_matrix2, LENGTH);
+    uint64_t result = BFV_result(decryptor, batch_encoder, product);
     cout << "   + Computed result: " << result << endl;
 
     /* Print whether the result is correct */

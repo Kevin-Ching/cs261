@@ -4,7 +4,7 @@
 using namespace std;
 using namespace seal;
 
-uint64_t vec_dot_product_ints(vector<uint64_t> vec1, vector<uint64_t> vec2, size_t length)
+uint64_t vec_int_dot_product(vector<uint64_t> vec1, vector<uint64_t> vec2, size_t length)
 {
     uint64_t result = 0;
     for (size_t i = 0; i < length; i++)
@@ -14,7 +14,7 @@ uint64_t vec_dot_product_ints(vector<uint64_t> vec1, vector<uint64_t> vec2, size
     return result;
 }
 
-Ciphertext enc_dot_product_ints(
+Ciphertext BFV_dot_product(
     Evaluator &evaluator, RelinKeys &relin_keys, GaloisKeys &galois_keys, 
     Ciphertext &encrypted1, Ciphertext &encrypted2, size_t length
 )
@@ -36,7 +36,7 @@ Ciphertext enc_dot_product_ints(
     return product;
 }
 
-uint64_t dot_product_val_BFV(Decryptor &decryptor, BatchEncoder &batch_encoder, Ciphertext &encrypted)
+uint64_t BFV_result(Decryptor &decryptor, BatchEncoder &batch_encoder, Ciphertext &encrypted)
 {
     Plaintext plain_result;
     decryptor.decrypt(encrypted, plain_result);
@@ -47,7 +47,7 @@ uint64_t dot_product_val_BFV(Decryptor &decryptor, BatchEncoder &batch_encoder, 
     return pod_result[0];
 }
 
-double vec_dot_product_floats(vector<double> vec1, vector<double> vec2, size_t length)
+double vec_float_dot_product(vector<double> vec1, vector<double> vec2, size_t length)
 {
     double result = 0;
     for (size_t i = 0; i < length; i++)
@@ -57,7 +57,7 @@ double vec_dot_product_floats(vector<double> vec1, vector<double> vec2, size_t l
     return result;
 }
 
-Ciphertext enc_dot_product_floats(
+Ciphertext CKKS_dot_product(
     Evaluator &evaluator, RelinKeys &relin_keys, GaloisKeys &galois_keys, 
     Ciphertext &encrypted1, Ciphertext &encrypted2, size_t length
 )
@@ -68,22 +68,19 @@ Ciphertext enc_dot_product_floats(
     evaluator.relinearize_inplace(product, relin_keys);
     evaluator.rescale_to_next_inplace(product);
 
-    // cout << "whatup" << endl;
     /* Repeatedly rotate and add */
     for (size_t rotation_steps = length / 2; rotation_steps >= 1; rotation_steps /= 2)
     {
-        // cout << rotation_steps << endl;
         Ciphertext product_rotated;
         evaluator.rotate_vector(product, rotation_steps, galois_keys, product_rotated);
 
-        // cout << "whatup again" << endl;
         evaluator.add_inplace(product, product_rotated);
     }
 
     return product;
 }
 
-double dot_product_val_CKKS(Decryptor &decryptor, CKKSEncoder &encoder, Ciphertext &encrypted)
+double CKKS_result(Decryptor &decryptor, CKKSEncoder &encoder, Ciphertext &encrypted)
 {
     Plaintext plain_result;
     decryptor.decrypt(encrypted, plain_result);
@@ -94,18 +91,18 @@ double dot_product_val_CKKS(Decryptor &decryptor, CKKSEncoder &encoder, Cipherte
     return vec_result[0];
 }
 
-vector<double> matrix_vec_product_floats(vector<vector<double>> matrix, vector<double> vec, size_t length)
+vector<double> matrix_vec_product(vector<vector<double>> matrix, vector<double> vec, size_t length)
 {
     vector<double> results(matrix.size());
     for (size_t i = 0; i < matrix.size(); i++)
     {
         vector<double> other_vec = matrix[i];
-        results[i] = vec_dot_product_floats(other_vec, vec, length);
+        results[i] = vec_float_dot_product(other_vec, vec, length);
     }
     return results;
 }
 
-vector<Ciphertext> enc_matrix_vector_product_floats(
+vector<Ciphertext> CKKS_matrix_vector_product(
     Evaluator &evaluator, RelinKeys &relin_keys, GaloisKeys &galois_keys, 
     vector<Ciphertext> &encrypted_matrix, Ciphertext &encrypted_vector, size_t length
 )
@@ -114,18 +111,18 @@ vector<Ciphertext> enc_matrix_vector_product_floats(
     for (size_t i = 0; i < encrypted_matrix.size(); i++)
     {
         Ciphertext other_encrypted_vector = encrypted_matrix[i];
-        product_vector[i] = enc_dot_product_floats(evaluator, relin_keys, galois_keys, other_encrypted_vector, encrypted_vector, length);
+        product_vector[i] = CKKS_dot_product(evaluator, relin_keys, galois_keys, other_encrypted_vector, encrypted_vector, length);
     }
     return product_vector;
 }
 
-vector<double> matrix_vector_product_vals(Decryptor &decryptor, CKKSEncoder &encoder, vector<Ciphertext> &vector_of_encrypted)
+vector<double> CKKS_results(Decryptor &decryptor, CKKSEncoder &encoder, vector<Ciphertext> &vector_of_encrypted)
 {
     vector<double> results(vector_of_encrypted.size());
     for (size_t i = 0; i < vector_of_encrypted.size(); i++)
     {
         Ciphertext encrypted = vector_of_encrypted[i];
-        results[i] = dot_product_val_CKKS(decryptor, encoder, encrypted);
+        results[i] = CKKS_result(decryptor, encoder, encrypted);
     }
     return results;
 }

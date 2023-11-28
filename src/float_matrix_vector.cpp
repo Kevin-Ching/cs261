@@ -6,7 +6,7 @@ using namespace seal;
 
 void test_float_matrix_vector_product()
 {
-    const size_t LENGTH = 1024;
+    const size_t DIMENSION = 128;
     const double UPPER_BOUND = 1000000;
     const double LOWER_BOUND = -UPPER_BOUND;
     const double NUM_ROWS = 8;
@@ -49,8 +49,8 @@ void test_float_matrix_vector_product()
     size_t slot_count = encoder.slot_count();
     cout << "Number of slots: " << slot_count << endl;
 
-    /* Print length of vectors */
-    cout << "Vector lengths: " << LENGTH << endl;
+    /* Print dimension of vectors */
+    cout << "Dimension of vectors: " << DIMENSION << endl;
 
     /* Print number of rows */
     cout << "Number of rows: " << NUM_ROWS << endl;
@@ -65,7 +65,7 @@ void test_float_matrix_vector_product()
     vector<vector<double>> matrix(NUM_ROWS, vector<double>(slot_count, 0ULL));
     for (size_t i = 0; i < NUM_ROWS; i++)
     {
-        for (size_t j = 0; j < LENGTH; j++)
+        for (size_t j = 0; j < DIMENSION; j++)
         {
             matrix[i][j] = unif(gen);
         }
@@ -94,7 +94,7 @@ void test_float_matrix_vector_product()
 
     /* Creating vector */
     vector<double> vec(slot_count, 0ULL);
-    for (size_t i = 0; i < LENGTH; i++)
+    for (size_t i = 0; i < DIMENSION; i++)
     {
         vec[i] = unif(gen);
     }
@@ -112,15 +112,15 @@ void test_float_matrix_vector_product()
     /* Printing true results */
     print_line(__LINE__);
     cout << "Computing plaintext matrix vector product." << endl;
-    vector<double> true_results = matrix_vec_product_floats(matrix, vec, LENGTH);
+    vector<double> true_results = matrix_vec_product(matrix, vec, DIMENSION);
     cout << "   + Expected result: " << endl;
     print_vector(true_results, 3, 7);
 
     /* Evaluating encrypted matrix vector product and printing result */
     print_line(__LINE__);
     cout << "Evaluating encrypted matrix vector product." << endl;
-    vector<Ciphertext> product_vector = enc_matrix_vector_product_floats(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_vector, LENGTH);
-    vector<double> results = matrix_vector_product_vals(decryptor, encoder, product_vector);
+    vector<Ciphertext> product_vector = CKKS_matrix_vector_product(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_vector, DIMENSION);
+    vector<double> results = CKKS_results(decryptor, encoder, product_vector);
     cout << "   + Computed result: " << endl;
     print_vector(results, 3, 7);
 

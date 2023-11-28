@@ -96,14 +96,14 @@ void test_float_dot_product()
     /* Printing true result */
     print_line(__LINE__);
     cout << "Computing plaintext dot product." << endl;
-    double true_result = vec_dot_product_floats(vec, vec2, LENGTH);
+    double true_result = vec_float_dot_product(vec, vec2, LENGTH);
     cout << "   + Expected result: " << true_result << endl;
 
     /* Evaluating encrypted dot product and printing result */
     print_line(__LINE__);
     cout << "Evaluating encrypted dot product." << endl;
-    Ciphertext product = enc_dot_product_floats(evaluator, relin_keys, galois_keys, encrypted_vector, encrypted_vector2, LENGTH);
-    double result = dot_product_val_CKKS(decryptor, encoder, product);
+    Ciphertext product = CKKS_dot_product(evaluator, relin_keys, galois_keys, encrypted_vector, encrypted_vector2, LENGTH);
+    double result = CKKS_result(decryptor, encoder, product);
     cout << "   + Computed result: " << result << endl;
 
     /* Print the absolute deviation from the true result */
