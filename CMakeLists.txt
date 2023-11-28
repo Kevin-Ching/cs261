@@ -9,6 +9,7 @@ target_sources(tests PRIVATE
     src/1_integer_dot_product.cpp
     src/2_float_dot_product.cpp
     src/3_float_matrix_vector.cpp
+    src/4_packed_matrix_vector.cpp
 )
 
 add_subdirectory(SEAL)
