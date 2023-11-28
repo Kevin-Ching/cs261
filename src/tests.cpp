@@ -15,6 +15,7 @@ int main()
         cout << "| 2. Float Dot Product       | 2_float_dot_product.cpp    |" << endl;
         cout << "| 3. Float Matrix Vector     | 3_float_matrix_vector.cpp  |" << endl;
         cout << "| 4. Packed Matrix Vector    | 4_packed_matrix_vector.cpp |" << endl;
+        cout << "| 5. Timed Packed Products   | 5_timed_packed_products.cpp|" << endl;
         cout << "+----------------------------+----------------------------+" << endl;
 
         /*
@@ -31,12 +32,12 @@ int main()
         bool valid = true;
         do
         {
-            cout << endl << "> Run test (1 ~ 4) or exit (0): ";
+            cout << endl << "> Run test (1 ~ 5) or exit (0): ";
             if (!(cin >> selection))
             {
                 valid = false;
             }
-            else if (selection < 0 || selection > 4)
+            else if (selection < 0 || selection > 5)
             {
                 valid = false;
             }
@@ -46,7 +47,7 @@ int main()
             }
             if (!valid)
             {
-                cout << "  [Beep~~] valid option: type 0 ~ 4" << endl;
+                cout << "  [Beep~~] valid option: type 0 ~ 5" << endl;
                 cin.clear();
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
@@ -68,6 +69,10 @@ int main()
 
         case 4:
             test_packed_matrix_vector_product();
+            break;
+
+        case 5:
+            test_timed_packed_products();
             break;
 
         case 0:

@@ -58,7 +58,6 @@ void test_float_matrix_vector_product()
     cout << "Number of rows: " << NUM_ROWS << endl;
 
     /* Setting up PRNG for doubles */
-    srand(time(NULL));
     uniform_real_distribution<double> unif(LOWER_BOUND, UPPER_BOUND);
     random_device rd;
     mt19937 gen(rd());
@@ -145,5 +144,5 @@ void test_float_matrix_vector_product()
     /* Checking that all deviations are within the tolerance */
     print_line(__LINE__);
     cout << "The tolerance is: " << TOLERANCE << endl;
-    cout << "All deviations are within the tolerance: " << all_within_tol << endl;
+    cout << "All deviations are within the tolerance: " << all_within_tol << endl << endl;
 }

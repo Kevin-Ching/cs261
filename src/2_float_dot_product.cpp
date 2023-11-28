@@ -54,7 +54,6 @@ void test_float_dot_product()
     cout << "Dimension of vectors: " << DIMENSION << endl;
 
     /* Setting up PRNG for doubles */
-    srand(time(NULL));
     uniform_real_distribution<double> unif(LOWER_BOUND, UPPER_BOUND);
     random_device rd;
     mt19937 gen(rd());
@@ -116,5 +115,5 @@ void test_float_dot_product()
     /* Checking that the deviation is within the tolerance */
     print_line(__LINE__);
     cout << "The tolerance is: " << TOLERANCE << endl;
-    cout << "The deviation is within the tolerance: " << (deviation < TOLERANCE) << endl;
+    cout << "The deviation is within the tolerance: " << (deviation < TOLERANCE) << endl << endl;
 }

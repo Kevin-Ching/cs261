@@ -113,5 +113,5 @@ void test_integer_dot_product()
     {
         correctness = "incorrect";
     }
-    cout << "The result is: " << correctness << endl;
+    cout << "The result is: " << correctness << endl << endl;
 }

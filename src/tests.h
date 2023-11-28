@@ -10,3 +10,5 @@ void test_float_dot_product();
 void test_float_matrix_vector_product();
 
 void test_packed_matrix_vector_product();
+
+void test_timed_packed_products();
