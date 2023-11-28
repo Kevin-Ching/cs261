@@ -6,10 +6,12 @@ using namespace seal;
 
 void test_float_matrix_vector_product()
 {
+    /* Parameters for the test */
     const size_t DIMENSION = 128;
     const double UPPER_BOUND = 1000000;
     const double LOWER_BOUND = -UPPER_BOUND;
     const double NUM_ROWS = 8;
+    const double TOLERANCE = 0.05;
 
     print_example_banner("Test: Float Matrix Vector Product");
 
@@ -128,9 +130,20 @@ void test_float_matrix_vector_product()
     print_line(__LINE__);
     cout << "The absolute deviations from the true results are: " << endl;
     vector<double> deviations(NUM_ROWS);
+    bool all_within_tol = true;
     for (size_t i = 0; i < NUM_ROWS; i++)
     {
-        deviations[i] = abs(true_results[i] - results[i]);
+        double deviation = abs(true_results[i] - results[i]);
+        deviations[i] = deviation;
+        if (deviation >= TOLERANCE)
+        {
+            all_within_tol = false;
+        }
     }
     print_vector(deviations, 3, 7);
+
+    /* Checking that all deviations are within the tolerance */
+    print_line(__LINE__);
+    cout << "The tolerance is: " << TOLERANCE << endl;
+    cout << "All deviations are within the tolerance: " << all_within_tol << endl;
 }

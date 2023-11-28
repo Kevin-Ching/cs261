@@ -11,9 +11,9 @@ int main()
         cout << "+---------------------------------------------------------+" << endl;
         cout << "| Tests                      | Source Files               |" << endl;
         cout << "+----------------------------+----------------------------+" << endl;
-        cout << "| 1. Integer Dot Product     | integer_dot_product.cpp    |" << endl;
-        cout << "| 2. Float Dot Product       | float_dot_product.cpp      |" << endl;
-        cout << "| 3. Float Matrix Vector     | float_matrix_vector.cpp    |" << endl;
+        cout << "| 1. Integer Dot Product     | 1_integer_dot_product.cpp  |" << endl;
+        cout << "| 2. Float Dot Product       | 2_float_dot_product.cpp    |" << endl;
+        cout << "| 3. Float Matrix Vector     | 3_float_matrix_vector.cpp  |" << endl;
         cout << "+----------------------------+----------------------------+" << endl;
 
         /*

@@ -6,9 +6,9 @@ add_executable(tests)
 target_sources(tests PRIVATE 
     src/tests.cpp src/tests.h 
     src/my_utils.cpp src/my_utils.h
-    src/integer_dot_product.cpp
-    src/float_dot_product.cpp
-    src/float_matrix_vector.cpp
+    src/1_integer_dot_product.cpp
+    src/2_float_dot_product.cpp
+    src/3_float_matrix_vector.cpp
 )
 
 add_subdirectory(SEAL)

@@ -6,7 +6,8 @@ using namespace seal;
 
 void test_integer_dot_product()
 {
-    const size_t LENGTH = 1024;
+    /* Parameters for the test */
+    const size_t DIMENSION = 1024;
 
     print_example_banner("Test: Integer Dot Product");
 
@@ -45,8 +46,8 @@ void test_integer_dot_product()
     size_t row_size = slot_count / 2;
     cout << "Plaintext matrix row size: " << row_size << endl;
 
-    /* Print "length" of matrices */
-    cout << "Matrix/vector lengths: " << LENGTH << endl;
+    /* Print "dimension" of matrices */
+    cout << "Dimension of matrices/vectors: " << DIMENSION << endl;
 
     /* Upper bound on matrix values */
     srand(time(NULL));
@@ -54,7 +55,7 @@ void test_integer_dot_product()
 
     /* Creating matrix 1 */
     vector<uint64_t> pod_matrix(slot_count, 0ULL);
-    for (size_t i = 0; i < LENGTH; i++)
+    for (size_t i = 0; i < DIMENSION; i++)
     {
         pod_matrix[i] = rand() % upper_bound;
     }
@@ -74,7 +75,7 @@ void test_integer_dot_product()
 
     /* Creating matrix 2 */
     vector<uint64_t> pod_matrix2(slot_count, 0ULL);
-    for (size_t i = 0; i < LENGTH; i++)
+    for (size_t i = 0; i < DIMENSION; i++)
     {
         pod_matrix2[i] = rand() % upper_bound;
     }
@@ -95,13 +96,13 @@ void test_integer_dot_product()
     /* Printing true result (modulus an upper bound on values (plain_modulus))*/
     print_line(__LINE__);
     cout << "Computing plaintext dot product." << endl;
-    uint64_t true_result = vec_int_dot_product(pod_matrix, pod_matrix2, LENGTH) % upper_bound;
+    uint64_t true_result = vec_int_dot_product(pod_matrix, pod_matrix2, DIMENSION) % upper_bound;
     cout << "   + Expected result: " << true_result << endl;
 
     /* Evaluating encrypted dot product and printing result */
     print_line(__LINE__);
     cout << "Evaluating encrypted dot product." << endl;
-    Ciphertext product = BFV_dot_product(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_matrix2, LENGTH);
+    Ciphertext product = BFV_dot_product(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_matrix2, DIMENSION);
     uint64_t result = BFV_result(decryptor, batch_encoder, product);
     cout << "   + Computed result: " << result << endl;
 

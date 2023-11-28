@@ -6,9 +6,11 @@ using namespace seal;
 
 void test_float_dot_product()
 {
-    const size_t LENGTH = 1024;
+    /* Parameters for the test */
+    const size_t DIMENSION = 1024;
     const double UPPER_BOUND = 1000000;
     const double LOWER_BOUND = -UPPER_BOUND;
+    const double TOLERANCE = 0.05;
 
     print_example_banner("Test: Float Dot Product");
 
@@ -48,8 +50,8 @@ void test_float_dot_product()
     size_t slot_count = encoder.slot_count();
     cout << "Number of slots: " << slot_count << endl;
 
-    /* Print length of vectors */
-    cout << "Vector lengths: " << LENGTH << endl;
+    /* Print dimension of vectors */
+    cout << "Dimension of vectors: " << DIMENSION << endl;
 
     /* Setting up PRNG for doubles */
     srand(time(NULL));
@@ -59,7 +61,7 @@ void test_float_dot_product()
 
     /* Creating vector 1 */
     vector<double> vec(slot_count, 0ULL);
-    for (size_t i = 0; i < LENGTH; i++)
+    for (size_t i = 0; i < DIMENSION; i++)
     {
         vec[i] = unif(gen);
     }
@@ -77,7 +79,7 @@ void test_float_dot_product()
 
     /* Creating vector 2 */
     vector<double> vec2(slot_count, 0ULL);
-    for (size_t i = 0; i < LENGTH; i++)
+    for (size_t i = 0; i < DIMENSION; i++)
     {
         vec2[i] = unif(gen);
     }
@@ -96,17 +98,23 @@ void test_float_dot_product()
     /* Printing true result */
     print_line(__LINE__);
     cout << "Computing plaintext dot product." << endl;
-    double true_result = vec_float_dot_product(vec, vec2, LENGTH);
+    double true_result = vec_float_dot_product(vec, vec2, DIMENSION);
     cout << "   + Expected result: " << true_result << endl;
 
     /* Evaluating encrypted dot product and printing result */
     print_line(__LINE__);
     cout << "Evaluating encrypted dot product." << endl;
-    Ciphertext product = CKKS_dot_product(evaluator, relin_keys, galois_keys, encrypted_vector, encrypted_vector2, LENGTH);
+    Ciphertext product = CKKS_dot_product(evaluator, relin_keys, galois_keys, encrypted_vector, encrypted_vector2, DIMENSION);
     double result = CKKS_result(decryptor, encoder, product);
     cout << "   + Computed result: " << result << endl;
 
     /* Print the absolute deviation from the true result */
     print_line(__LINE__);
-    cout << "The absolute deviation from the true result is: " << abs(true_result - result) << endl;
+    double deviation = abs(true_result - result);
+    cout << "The absolute deviation from the true result is: " << deviation << endl;
+
+    /* Checking that the deviation is within the tolerance */
+    print_line(__LINE__);
+    cout << "The tolerance is: " << TOLERANCE << endl;
+    cout << "The deviation is within the tolerance: " << (deviation < TOLERANCE) << endl;
 }
