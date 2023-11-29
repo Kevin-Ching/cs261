@@ -10,7 +10,7 @@ void test_float_matrix_vector_product()
     const size_t DIMENSION = 128;
     const double UPPER_BOUND = 1000000;
     const double LOWER_BOUND = -UPPER_BOUND;
-    const double NUM_ROWS = 8;
+    const size_t NUM_ROWS = 8;
     const double TOLERANCE = 0.05;
 
     print_example_banner("Test: Float Matrix Vector Product");

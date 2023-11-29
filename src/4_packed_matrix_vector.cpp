@@ -8,10 +8,10 @@ void test_packed_matrix_vector_product()
 {
     /* Parameters for the test */
     const size_t DIMENSION = 128;
-    const double UPPER_BOUND = 1000000;
-    const double LOWER_BOUND = -UPPER_BOUND;
-    const double NUM_ROWS = 32;
-    const double TOLERANCE = 0.05;
+    const double UPPER_BOUND = 1;
+    const double LOWER_BOUND = 0;
+    const size_t NUM_ROWS = 32;
+    const double TOLERANCE = 1e-4;
 
     print_example_banner("Test: Packed Float Matrix Vector Product");
 

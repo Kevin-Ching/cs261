@@ -4,14 +4,14 @@
 using namespace std;
 using namespace seal;
 
-void timed_test_with_num_rows(SEALContext context, const double NUM_ROWS)
+unsigned long timed_test_with_num_rows(SEALContext context, size_t NUM_ROWS, const bool ONE_ROW_MATRIX)
 {
     /* Parameters for the test */
     const size_t DIMENSION = 128;
-    const double UPPER_BOUND = 1000000;
-    const double LOWER_BOUND = -UPPER_BOUND;
-    const double TOLERANCE = 0.05;
-    const double REPS = 10;
+    const double UPPER_BOUND = 1;
+    const double LOWER_BOUND = 0;
+    const double TOLERANCE = 1e-4;
+    const size_t REPS = 10;
 
     /* Setting scale */
     double scale = pow(2.0, 40);
@@ -47,8 +47,20 @@ void timed_test_with_num_rows(SEALContext context, const double NUM_ROWS)
     /* Print number of rows */
     cout << "Number of rows: " << NUM_ROWS << endl;
 
+    /* Print the number of vectors per row */
+    cout << "Number of vectors per row: " << num_vecs_per_row << endl;
+
     /* Print tolerance */
     cout << "The tolerance is: " << TOLERANCE << endl;
+
+    /* One row matrix memory "hack" */
+    cout << "Using one row matrix memory \"hack\": " << (ONE_ROW_MATRIX ? "true" : "false") << endl;
+    size_t old_num_rows = 1;
+    if (ONE_ROW_MATRIX)
+    {
+        old_num_rows = NUM_ROWS;
+        NUM_ROWS = 1;
+    }    
 
     /* Setting up PRNG for doubles */
     uniform_real_distribution<double> unif(LOWER_BOUND, UPPER_BOUND);
@@ -62,6 +74,7 @@ void timed_test_with_num_rows(SEALContext context, const double NUM_ROWS)
     vector<int64_t> times(REPS);
     chrono::milliseconds time_sum(0);
     chrono::milliseconds time_diff;
+    
 
     for (size_t i = 0; i < REPS; i++)
     {
@@ -106,8 +119,12 @@ void timed_test_with_num_rows(SEALContext context, const double NUM_ROWS)
         double first_true_result = vec_float_dot_product(matrix[0], duplicated_vec, DIMENSION);
 
         /* Timing the encrypted matrix vector product */
+        vector<Ciphertext> product_vector;
         time_start = chrono::high_resolution_clock::now();
-        vector<Ciphertext> product_vector = CKKS_matrix_vector_product(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_vector, DIMENSION);
+        for (size_t i = 0; i < old_num_rows; i++)
+        {
+            product_vector = CKKS_matrix_vector_product(evaluator, relin_keys, galois_keys, encrypted_matrix, encrypted_vector, DIMENSION);
+        }
         time_end = chrono::high_resolution_clock::now();
         time_diff = chrono::duration_cast<chrono::milliseconds>(time_end - time_start);
 
@@ -116,7 +133,7 @@ void timed_test_with_num_rows(SEALContext context, const double NUM_ROWS)
         /* Checking that the first deviation is within the tolerance */
         if (abs(first_true_result - first_result) >= TOLERANCE)
         {
-            cout << "An absolute deviation was not within the tolerance." << endl;
+            cerr << "An absolute deviation was not within the tolerance." << endl;
         }
 
         /* Record time */
@@ -131,6 +148,7 @@ void timed_test_with_num_rows(SEALContext context, const double NUM_ROWS)
     /* Print average time */
     auto avg_time = time_sum.count() / REPS;
     cout << "Average time: " << avg_time << " milliseconds" << endl;
+    return avg_time;
 }
 
 void test_timed_packed_products()
@@ -149,10 +167,23 @@ void test_timed_packed_products()
     print_parameters(context);
     cout << endl;
 
-    timed_test_with_num_rows(context, 8);   // 256 vectors
-    timed_test_with_num_rows(context, 16);  // 512 vectors
-    timed_test_with_num_rows(context, 32);  // 1024 vectors
-    timed_test_with_num_rows(context, 64);  // 2048 vectors
+    // timed_test_with_num_rows(context, 8, true);   // 256 vectors
+    // timed_test_with_num_rows(context, 16, true);  // 512 vectors
+    // timed_test_with_num_rows(context, 32, true);  // 1024 vectors
+    // timed_test_with_num_rows(context, 64, true);  // 2048 vectors
+    // timed_test_with_num_rows(context, 3125, true);  // 100k vectors
+
+    size_t start = 8;
+    size_t end = 2048;
+    // end = 8;
+    vector<unsigned long> avg_times;
+    for (size_t num_rows = start; num_rows <= end; num_rows *= 2)
+    {
+        avg_times.push_back(timed_test_with_num_rows(context, num_rows, true));
+    }
+
+    cout << endl << "All average times: " << endl;
+    print_vector(avg_times, avg_times.size());
 
     cout << endl;
 }
