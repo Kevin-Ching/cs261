@@ -4,7 +4,7 @@
 using namespace std;
 using namespace seal;
 
-unsigned long timed_test_with_num_rows(SEALContext context, size_t NUM_ROWS, const bool ONE_ROW_MATRIX)
+unsigned long timed_test_with_num_rows(SEALContext context, size_t NUM_ROWS)
 {
     /* Parameters for the test */
     const size_t DIMENSION = 128;
@@ -12,6 +12,7 @@ unsigned long timed_test_with_num_rows(SEALContext context, size_t NUM_ROWS, con
     const double LOWER_BOUND = 0;
     const double TOLERANCE = 1e-4;
     const size_t REPS = 10;
+    const bool ONE_ROW_MATRIX = false;
 
     /* Setting scale */
     double scale = pow(2.0, 40);
@@ -167,19 +168,20 @@ void test_timed_packed_products()
     print_parameters(context);
     cout << endl;
 
-    // timed_test_with_num_rows(context, 8, true);   // 256 vectors
-    // timed_test_with_num_rows(context, 16, true);  // 512 vectors
-    // timed_test_with_num_rows(context, 32, true);  // 1024 vectors
-    // timed_test_with_num_rows(context, 64, true);  // 2048 vectors
-    // timed_test_with_num_rows(context, 3125, true);  // 100k vectors
+    // timed_test_with_num_rows(context, 8);   // 256 vectors
+    // timed_test_with_num_rows(context, 16;  // 512 vectors
+    // timed_test_with_num_rows(context, 32);  // 1024 vectors
+    // timed_test_with_num_rows(context, 64);  // 2048 vectors
+    // timed_test_with_num_rows(context, 3125);  // 100k vectors
 
+    /* Change these input parameters */
     size_t start = 8;
-    size_t end = 2048;
-    // end = 8;
+    size_t end = 32;
+
     vector<unsigned long> avg_times;
     for (size_t num_rows = start; num_rows <= end; num_rows *= 2)
     {
-        avg_times.push_back(timed_test_with_num_rows(context, num_rows, true));
+        avg_times.push_back(timed_test_with_num_rows(context, num_rows));
     }
 
     cout << endl << "All average times: " << endl;

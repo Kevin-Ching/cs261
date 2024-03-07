@@ -8,15 +8,15 @@ int main()
 {
     while (true)
     {
-        cout << "+---------------------------------------------------------+" << endl;
-        cout << "| Tests                      | Source Files               |" << endl;
-        cout << "+----------------------------+----------------------------+" << endl;
-        cout << "| 1. Integer Dot Product     | 1_integer_dot_product.cpp  |" << endl;
-        cout << "| 2. Float Dot Product       | 2_float_dot_product.cpp    |" << endl;
-        cout << "| 3. Float Matrix Vector     | 3_float_matrix_vector.cpp  |" << endl;
-        cout << "| 4. Packed Matrix Vector    | 4_packed_matrix_vector.cpp |" << endl;
-        cout << "| 5. Timed Packed Products   | 5_timed_packed_products.cpp|" << endl;
-        cout << "+----------------------------+----------------------------+" << endl;
+        cout << "+-------------------------------------------------------------+" << endl;
+        cout << "| Tests                        | Source Files                 |" << endl;
+        cout << "+------------------------------+------------------------------+" << endl;
+        cout << "| 1. Integer Dot Product       | 1_integer_dot_product.cpp    |" << endl;
+        cout << "| 2. Float Dot Product         | 2_float_dot_product.cpp      |" << endl;
+        cout << "| 3. Float Matrix Vector       | 3_float_matrix_vector.cpp    |" << endl;
+        cout << "| 4. Packed Matrix Vector      | 4_packed_matrix_vector.cpp   |" << endl;
+        cout << "| 5. Timed Packed Products     | 5_timed_packed_products.cpp  |" << endl;
+        cout << "+------------------------------+------------------------------+" << endl;
 
         /*
         Print how much memory we have allocated from the current memory pool.
